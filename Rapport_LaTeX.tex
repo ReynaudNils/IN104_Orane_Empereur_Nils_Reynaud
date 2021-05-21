@@ -165,31 +165,34 @@ The data-set used for this method is the data-set of the titanic survivor. The g
 \large
 The first method we used to understand the various machine learning models is the PDP-one, Partial Dependence Plots, which shows the marginal effect one or two features have on the predicted outcome of the model used. After exploring several PDP codes on Kaggle, there weren't many difficulties in coding.
 We used it to explain two different machine learning models, xgboost and RandomForest. We'll mainly focus on the first one here.
-Firstly, this method allowed us to study the importance of each feature for the model: it gives us the percentage of survivors for every value of the feature according to the real data, the percentage of survivors for every value of the feature according to the prediction of the model, and finally a partial dependance plot that shows whether the relationship between the feature we're studying and the variable target, here the survival or not of each passenger, is linear, monotonic or more complex.
+Firstly, this method allowed us to study the importance of each feature for the model: it gives us the percentage of survivors for every value of the feature according to the real data, the percentage of survivors for every value of the feature according to the prediction of the model, and finally a partial dependance plot that shows whether the relationship between the feature we're studying and the variable target, here the survival or not of each passenger, is linear, monotonic or more complex in the prediction.
 Let's first take a look at what we got for the feature Age, firstly the percentage of survivors for every age category according to the real data:
-
+\centering
       \includegraphics[width=0.5\textwidth]{PDP_Age_1 (2).png}
 
 Then this same percentage but according to the prediction:
-
-    \centering
+\centering
       \includegraphics[width=0.5\textwidth]{2021-05-20 (6).png}
       
 Finally, we get the interaction between the Age of the passenger and his survival, which is linear between 0 and 20 and then between 20 and 80.
 
-     \centering
+\centering
       \includegraphics[width=0.5\textwidth]{2021-05-20 (10).png}
 We did the same for other features such as Passenger class, Gender. As we can see, these interpretations are marginal, considering only one feature at a time. PDPs for two features are more relevant, as they show the interactions among the two features. We studied multiple combinations of two features, starting with Age and Passenger class: we were able to obtain the pourcentage of survivors based on these two features according to the real data.
-
-    \centering
+\centering
       \includegraphics[width=0.5\textwidth]{2021-05-20 (13).png}
       
     then according to the prediction:
-    \centering
+\centering    
       \includegraphics[width=0.5\textwidth]{2021-05-20 (12).png}
 And finally the dependence of the target variable survival on joint values of Age and Passenger class
-      \centering
+\centering
       \includegraphics[width=0.5\textwidth]{2021-05-20 (11).png}
+\subsection{ICE}
+Individual conditional expectation, or ICE, is a method similar to PDP but a bit improved. It also shows the dependance between the target function, here if you survived or not, and an input feature of interest. But while PDP shows the average effect of the input feature, an ICE plot visualizes the dependence of the prediction on a feature for each sample separately with one line for each sample.
+We weren't able to make the code work because when entering the line: display = plot_partial_dependence(titanic_model, titanic_data, titanic_features, kind="both) the computer responded that  plot_partial_dependence() got an unexpected keyword argument 'kind'. The problem is that we need to update the version of scikit-learn to 0.24.1, however this wasn't working with the usual lines conda update conda followed by conda install scikit-learn=0.24.1.
+Therefore the following graph that illustrates this method was taken online.
+
 \subsection{SHAP}
 \large
 Let's now focus on the second explainability method we explored in order to understand the predictions made by the model, SHAP, or SHapley Additive ExPlanations.It is an approach based on game theory.
@@ -201,15 +204,15 @@ However, this plot gives no information beyond the importance of each feature. W
 \centering
       \includegraphics[width=0.5\textwidth]{2021-05-20 (14).png}
 Then this method gave us another plot, the SHAP dependence plot that shows the marginal effect one or two features have on the predicted outcome of our machine learning model.
+
 \centering
-      \includegraphics[width=0.5\textwidth]{2021-05-20 (14).png}
+      \includegraphics[width=0.5\textwidth]{2021-05-20 (15).png}).png}
 
 The SHAP method even enables us to compare various machine learning models, RandomForest, xgb, but also MLP or LogisticRegression. It tells us the most important features for each model, which allows us to calculate a weighted SHAP Value, that takes into consideration everyone of these model. Moreover, it creates a cross-model feature importance graph. We can now objectively see the most important features.
 We faced huge difficulties coding this part and weren't able to make it work, the main problem being that it took several hours for the computer to run it. 
 \subsection{LIME}
 \Large
 LIME (Local Interpretable Model-agnostic) is a method explaining the prediction of any classifier.
-This data (figure 2) was obtained with the 200 first passenger in the data-set.
 The model predicts that only 0.312 percent of passenger survived, that in fact a result close of reality, so the method seem to be correct. 
 \newline
     
@@ -221,7 +224,7 @@ The model predicts that only 0.312 percent of passenger survived, that in fact a
 
    
 \Large
-This paragraph will confirm that the model seem to be correct. LIME method show that the most important factor for survival is your sex, after it is the class of passenger and then the age. In blue it is the factors which have a negative impact on the prediction and in orange a positive one. The table shows the most common values taken by the feature. For the sex 0 corresponds to a male person.
+This paragraph will confirm that the model seem to be correct. LIME method show that the most important factor for survival is your sex, after it is the class of passenger and then the age. To obtain which features are the most important according to the model, LIME uses a slightly different input in which the data for one chosen feature are changed, and then observe the effect on the prediction outcome. In blue it is the factors which have a negative impact on the prediction and in orange a positive one. The table shows the most common values taken by the feature. For the sex 0 corresponds to a male person.
 \newline
     \centering
         \includegraphics{LIMEtabresult2.png}
@@ -242,7 +245,8 @@ But even if our model is optimistic it corresponds to our expectation. We compar
 On this graph we can see that indeed sex and class of passenger are very important factors in survival.
 
 \subsection{Conclusion on the Tabular Dataset}
-Time for a quick recap on this tabular dataset and the 3 different methods we saw to explain machine learning models. PDP is the simplest one, it shows the effect one chosen feature has on the prediction as well as the interaction between several features. SHAP is much more useful, as it ranks for the given model every feature by importance, and can do so for every machine learning model. LIME offers a completely new point of view,as it shows how the prediction varies when you change the input of one the features; in other words, it describes the effect every feature has on the prediction.
+Time for a quick recap on this tabular dataset and the 4 different methods we saw to explain machine learning models. PDP is the simplest one, it shows the effect one chosen feature has on the prediction as well as the interaction between several features. ICE is the slightly more elaborate version. SHAP is much more useful, as it ranks for the given model every feature by importance, and can do so for every machine learning model. LIME offers a completely new point of view,as it shows how the prediction varies when you change the input of one the features; in other words, it describes the effect every feature has on the prediction.
+
 \section{Text Dataset:20 NewsGroups}
 \Large
 We did not found text data-set about titanic survivor on Kaggle, that is why in order to test LIME method with text we chose to use another one. The data-set that we choose is 20 news groups, a famous one. The purpose is to use LIME method in order to know if the text is more a catholic opinion or a atheist one. This data-set is composed of more than 20 000 texts.
@@ -255,7 +259,7 @@ Example of result with the document number ten :
         \small result gibe LIME method
         \newline
 \Larger        
-There is also a graph that is show with more details the result obtain with this method (global result).
+There is also a graph that shows with more details the result obtained with this method (global result).
 \newline
     \centering
         \includegraphics[width=0.5\textwidth]{LIMEtextglobalpredict.png}
@@ -265,7 +269,7 @@ There is also a graph that is show with more details the result obtain with this
 \Large
 With the text number ten the prediction are indicated that the higher probability is that this text is atheist (orange). In blue it is the prediction about catholic.
 \newline
-There is also give a local explanation about why the atheist class was chose.
+There is also a local explanation about why the atheist class was chosen.
 \newline
     \centering
         \includegraphics[width=0.5\textwidth]{LIMEtextlocalpredict.png}
@@ -273,12 +277,13 @@ There is also give a local explanation about why the atheist class was chose.
         result lime method, local
         \newline
 \Larger
-This graph allow to know the word that impact the AI decision for choose the class of the text. 
+This graph allows us to know the words of the text that impact the AI's decision to choose the class of the text, between catholic and atheist. In that way we can start to understand the prediction we got, why we got it.
 
-\section{Comparison with other method}
+\subsection{Comparison with other method}
 
 \Large
-In this paragraph we will compare different methods completely already done and available on github at this different address :
+We tried desperately to code several other methods for this text dataset that the teacher gave us, but we weren't able to make them work. For instance we tried Pyss3, but we couldn't download it on anaconda, when coding conda install Pyss3 it could not find the package.
+Therefore in this paragraph we will compare different methods completely already done and available on github at this different address :
 \small
 https://github.com/robinvanschaik/interpret-flair
 \newline
@@ -290,11 +295,10 @@ https://github.com/sergioburdisso/pyss3
 \newline
 \newline
 \Large
-The first one, interpret-flair use the LayerIntegratedGradients method in order to attribute score to the world, it can be an effective way to create summary.
-The second one, transformers-interpret use the transformer package, it permit to attribute a class to the word in a sentence : positive, negative or neutral. But with a largest vision it can permit a support for NER models or Multiple Choice Model.
-Sentence-transformers like indicate this name use Sentence-tranformers method. This method also allow to realise summary like the first one, but it can also used in semantic research. In fact this contain lot of different method of sentence-transformers but interpret-flair method is a better one in term of accuracy. The next figure show the results obtain by this two methods.
+The first one, interpret-flair, uses the LayerIntegratedGradients method in order to attribute score to the world, it can be an effective way to create a summary.
+The second one, transformers-interpret, uses the transformer package, it allows us to attribute a class to the word in a sentence : positive, negative or neutral. But with a larger vision it allows a support for NER models or Multiple Choice Model.
+Sentence-transformers like indicate this name use Sentence-tranformers method. This method also allows to realise a summary like the first one, but it can also used in semantic research. In fact this contain lot of different methods of sentence-transformers but interpret-flair method is a better one in term of accuracy. The next figure show the results obtain by this two methods.
 
-    \centering
         \includegraphics{inter-flair.png}
         \small
         results obtain by interpret-flair method
@@ -308,7 +312,7 @@ Sentence-transformers like indicate this name use Sentence-tranformers method. T
 \Large
 The last method is a one which can be used in text classification, and have the ability to determined what it is rational. In addition, this method is very useful for model evaluation.
 \newline
-To conclude this four methods all treated about text data-sets (not necessary for the third and four), but there not effective for the same application. In fact the better way to do is probably to use adapted method for each situation.
+To conclude these four methods all treated about text data-sets (not necessary for the third and four), but there were not effective for the same application. In fact the better way to do is probably to use adapted method for each situation.
 
 
 
@@ -319,8 +323,8 @@ During the first week we tried to understand the purpose and the attempt of the 
 
 \subsection{Difficulties encountered during the project}
 \Large
-We encountered plenty of difficulties during the project. The first one is probably about the language. Another one is that it took overtime to understand the goal of this project. But the hardest things it is to try to understand the method, their code, and how to adjust it in order to use in each case and different data-set. Moreover some package did not work on python even if we installed it, that is why we used notebook for LIME method (text and table).
-Furthermore the project was complicated by the health problems of one of the author, so it took more time to understand the expectation of the course and get going. Indeed, it lead to absences which prevented us from acquainting ourselves with the tools used in IN104 (like github, Kaggle,...).
+We encountered plenty of difficulties during the project. The first one is probably about the language. Another one is that it took a lot of time to understand the goal of this project. But the hardest things it is to try to understand the method, their code, and how to adjust it in order to use in each case and different data-set. Moreover some package did not work on python even if we installed it, that is why we used notebook for LIME method (text and table).
+We wish we would have been able to get going faster.However the project was complicated by the health problems of one of the author, so it took more time to understand the expectation of the course and get going. Indeed, it lead to absences which prevented us from acquainting ourselves with the tools used in IN104 (like github, Kaggle,...).
 
 \section{To Conclude}
 \Large
@@ -330,3 +334,4 @@ To conclude, this project was rather difficult but it was interesting to discove
 \endinput
 %%
 %% End of file `sample-sigplan.tex'.
+
